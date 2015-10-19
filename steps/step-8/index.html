@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="app">
+<head>
+  <meta charset="UTF-8">
+  <title>Survey</title>
+  <link rel="stylesheet" href="http://getbootstrap.com/dist/css/bootstrap.min.css">
+
+  <style>
+  [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+    display: none !important;
+  }
+
+  textarea {
+    max-width: 100%;
+    min-height: 150px;
+  }
+
+  </style>
+</head>
+<body ng-cloak ng-controller="LayoutController as layout">
+  <div class="container">
+    <row ng-controller="HeaderController as header">
+      <column>
+        <div class="page-header">
+          <h1>
+            {{ header.title | uppercase }}
+
+            <button ng-class="{'btn-primary': layout.active.survey === true, 'btn-default': layout.active.survey !== true }"
+                    ng-click="layout.handleActivity({
+                      active: 'survey',
+                      inactive: 'results'
+                    })"
+                    class="btn">Survey</button>
+
+            <button ng-class="{'btn-primary': layout.active.results === true, 'btn-default': layout.active.results !== true }"
+                    ng-click="layout.handleActivity({
+                      active: 'results',
+                      inactive: 'survey'
+                    })"
+                    class="btn">Results</button>
+
+          </h1>
+        </div>
+      </column>
+    </row>
+
+    <row ng-show="layout.active.survey" ng-controller="SurveyController as survey">
+      <column overwrite="col-md-4 col-md-push-4">
+        <form name="form" novalidate ng-submit="survey.saveSurvey(survey.formData, form.$valid)">
+          <div class="form-group">
+            <label>First name <span ng-show="survey.showError('firstName', form)">This is a required field</span></label>
+            <input name="firstName" required ng-model="survey.formData.firstName" class="form-control" type="text">
+          </div>
+
+          <div class="form-group">
+            <label>Last name <span ng-show="survey.showError('lastName', form)">This is a required field</span></label>
+            <input ng-model="survey.formData.lastName" required name="lastName" type="text" class="form-control">
+          </div>
+
+          <div class="form-group">
+            <label>Age <span ng-show="survey.showError('age', form)">This is a required field</span></label>
+            <input required type="number" class="form-control" name="age" ng-model="survey.formData.age">
+          </div>
+
+          <hr>
+
+          <p>
+            How happy are you on a scale of 1 - 4
+          </p>
+
+          <div class="radio">
+            <label>
+              <input type="radio" ng-model="survey.formData.happiness" value="1">
+              1 = unhappy
+            </label>
+          </div>
+
+          <div class="radio">
+            <label>
+              <input type="radio" ng-model="survey.formData.happiness" value="2">
+              2 = somewhat happy
+            </label>
+          </div>
+
+          <div class="radio">
+            <label>
+              <input type="radio" ng-model="survey.formData.happiness" value="3">
+              3 = happy
+            </label>
+          </div>
+
+          <div class="radio">
+            <label>
+              <input type="radio" ng-model="survey.formData.happiness" value="4">
+              4 = super happy
+            </label>
+          </div>
+
+          <hr>
+
+          <p>
+            Which programming languages are you familiar with?
+          </p>
+
+          <div class="checkbox">
+            <label>
+              <input ng-model="survey.formData.language.cSharp" type="checkbox">
+              C#
+            </label>
+          </div>
+
+          <div class="checkbox">
+            <label>
+              <input type="checkbox" ng-model="survey.formData.language.javascript">
+              JavaScript
+            </label>
+          </div>
+
+          <div class="checkbox">
+            <label>
+              <input type="checkbox" ng-model="survey.formData.language.java">
+              Java
+            </label>
+          </div>
+
+          <div class="checkbox">
+            <label>
+              <input type="checkbox" ng-model="survey.formData.language.other">
+              Other
+            </label>
+          </div>
+
+          <hr>
+
+          <div class="form-group">
+            <label>Comment</label>
+            <textarea ng-model="survey.formData.comment" class="form-control"></textarea>
+          </div>
+
+          <hr>
+
+          <div class="form-group">
+            <button class="btn btn-primary">Submit</button>
+            <a class="btn btn-default">Cancel</a>
+          </div>
+
+        </form>
+        <!--
+          <pre>{{ form | json }}</pre>
+          <pre>{{ survey.formData | json }}</pre>
+        -->
+      </column>
+    </row>
+
+    <row ng-if="layout.active.results" ng-controller="ResultController as result">
+      <column>
+
+        <row>
+          <column ng-repeat="survey in result.surveys | orderBy:'-happiness'" size="6">
+            <pre>{{ survey | json }}</pre>
+          </column>
+        </row>
+
+      </column>
+    </row>
+
+  </div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"></script>
+  <script src="bootstrap.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
